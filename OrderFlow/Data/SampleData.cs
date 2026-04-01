@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 public static class SampleData
 {
     public static List<Product> Products = new List<Product>
