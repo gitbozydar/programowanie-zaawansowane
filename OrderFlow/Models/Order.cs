@@ -1,4 +1,3 @@
-
 public class Order
 {
     public Customer Customer{get; private set;}
