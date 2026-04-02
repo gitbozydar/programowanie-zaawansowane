@@ -56,56 +56,79 @@
             Console.WriteLine($"TOP: {o.TotalPrice} | {o.Status}")
         );
 
-        Console.ReadKey();
         Console.WriteLine("\n=== LINQ  ===");
 
-var join = SampleData.Orders
-    .Join(SampleData.Customers,
-        o => o.Customer.Id,
-        c => c.Id,
-        (o, c) => new { c.Username, o.TotalPrice });
+        var join = SampleData.Orders
+            .Join(SampleData.Customers,
+                o => o.Customer.Id,
+                c => c.Id,
+                (o, c) => new { c.Username, o.TotalPrice });
 
-foreach (var x in join)
-    Console.WriteLine(x.Username + " -> " + x.TotalPrice);
+        foreach (var x in join)
+            Console.WriteLine(x.Username + " -> " + x.TotalPrice);
 
-var products = SampleData.Orders
-    .SelectMany(o => o.Items)
-    .Select(i => i.Product);
+        var products = SampleData.Orders
+            .SelectMany(o => o.Items)
+            .Select(i => i.Product);
 
-foreach (var p in products)
-    Console.WriteLine("Product: " + p.Category);
+        foreach (var p in products)
+            Console.WriteLine("Product: " + p.Category);
 
-var groups = SampleData.Orders
-    .GroupBy(o => o.Customer.Username)
-    .Select(g => new
-    {
-        Name = g.Key,
-        Total = g.Sum(x => x.TotalPrice)
-    });
+        var groups = SampleData.Orders
+            .GroupBy(o => o.Customer.Username)
+            .Select(g => new
+            {
+                Name = g.Key,
+                Total = g.Sum(x => x.TotalPrice)
+            });
 
-foreach (var g in groups)
-    Console.WriteLine(g.Name + " -> " + g.Total);
+        foreach (var g in groups)
+            Console.WriteLine(g.Name + " -> " + g.Total);
 
-var leftJoin = SampleData.Customers
-    .GroupJoin(SampleData.Orders,
-        c => c.Id,
-        o => o.Customer.Id,
-        (c, orders) => new
+        var leftJoin = SampleData.Customers
+            .GroupJoin(SampleData.Orders,
+                c => c.Id,
+                o => o.Customer.Id,
+                (c, orders) => new
+                {
+                    c.Username,
+                    Count = orders.Count()
+                });
+
+        foreach (var x in leftJoin)
+            Console.WriteLine(x.Username + " orders: " + x.Count);
+
+        var query =
+            from o in SampleData.Orders
+            join c in SampleData.Customers
+            on o.Customer.Id equals c.Id
+            select new { c.Username, o.TotalPrice };
+
+        foreach (var x in query)
+            Console.WriteLine(x.Username + " -> " + x.TotalPrice);
+
+        var pipeline = new OrderPipeline();
+
+        Console.WriteLine("lab2");
+
+        pipeline.StatusChanged += (sender, e) =>
         {
-            c.Username,
-            Count = orders.Count()
-        });
+            Console.WriteLine($"[Logger] Order status changed: {e.OldStatus} → {e.NewStatus}");
+        };
 
-foreach (var x in leftJoin)
-    Console.WriteLine(x.Username + " orders: " + x.Count);
+        pipeline.StatusChanged += (sender, e) =>
+        {
+            Console.WriteLine($"[Email] Sending email: Order for {e.Order.Customer.Username} is now {e.NewStatus}");
+        };
 
-var query =
-    from o in SampleData.Orders
-    join c in SampleData.Customers
-    on o.Customer.Id equals c.Id
-    select new { c.Username, o.TotalPrice };
+        pipeline.StatusChanged += (sender, e) =>
+        {
+            Console.WriteLine($"[Stats] Increment counter for status {e.NewStatus}");
+        };
 
-foreach (var x in query)
-    Console.WriteLine(x.Username + " -> " + x.TotalPrice);
+        var customer = new Customer(1, "jakub_kozlowski", "jakubkozlo@wp.pl");
+        var order = new Order(customer);
+        pipeline.ProccessOrder(order);
+
     }
 }
