@@ -4,6 +4,7 @@
     {
         var orders = SampleData.Orders;
 
+        Console.WriteLine($"Orders count: {orders.Count}");
         var processor = new OrderProcessor(orders);
 
         Predicate<Order> highValue = o => o.TotalPrice > 500;
@@ -139,5 +140,19 @@
 
         Console.WriteLine("\n=== MULTIPLE ORDERS ===");
         await simulator.ProcessMultipleOrdersAsync(allOrders);
+
+        var repo = new OrderRepository();
+        var testOrders = SampleData.Orders;
+
+        await repo.SaveToJsonAsync(testOrders, "Data/orders.json");
+        await repo.SaveToXmlAsync(testOrders, "Data/orders.xml");
+
+        var json = await repo.LoadFromJsonAsync("Data/orders.json");
+        var xml = await repo.LoadFromXmlAsync("Data/orders.xml");
+
+        Console.WriteLine(json.Count);
+        Console.WriteLine(xml.Count);
+        Console.WriteLine(json.Sum(o => o.TotalPrice));
+        Console.WriteLine(xml.Sum(o => o.TotalPrice));
     }
 }

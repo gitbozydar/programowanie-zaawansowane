@@ -1,11 +1,14 @@
 public class OrderItem
 {
-    public Product Product{get; private set;}
-    public int Quantity{get; private set;}
+    public Product Product { get; set; }
+    public int Quantity { get; set; }
     public OrderItem(Product product, int quantity)
     {
         Product = product;
         Quantity = quantity;
     }
     public double TotalPrice => Product.Price * Quantity;
+    public OrderItem()
+    {
+    }
 }
