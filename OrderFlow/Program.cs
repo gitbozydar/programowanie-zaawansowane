@@ -1,6 +1,6 @@
 ﻿class Program
 {
-    static void Main(string[] args)
+    static async Task Main(string[] args)
     {
         var orders = SampleData.Orders;
 
@@ -130,5 +130,14 @@
         var order = new Order(customer);
         pipeline.ProccessOrder(order);
 
+        var allOrders = SampleData.Orders;
+
+        var simulator = new ExternalServiceSimulator();
+
+        Console.WriteLine("=== SINGLE ORDER ===");
+        await simulator.ProcessOrderAsync(allOrders[0]);
+
+        Console.WriteLine("\n=== MULTIPLE ORDERS ===");
+        await simulator.ProcessMultipleOrdersAsync(allOrders);
     }
 }
