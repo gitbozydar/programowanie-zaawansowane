@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<report generated="2026-05-12T22:38:40">
+  <summary totalOrders="6" totalRevenue="6230.00" />
+  <byStatus>
+    <status name="New" count="2" revenue="4840.00" />
+    <status name="Processing" count="1" revenue="120.00" />
+    <status name="Validated" count="1" revenue="680.00" />
+    <status name="Completed" count="1" revenue="290.00" />
+    <status name="Cancelled" count="1" revenue="300.00" />
+  </byStatus>
+  <byCustomer>
+    <customer id="1" name="Janek">
+      <orderCount>2</orderCount>
+      <totalSpent>1890.00</totalSpent>
+      <orders>
+        <orderRef id="0" total="1600.00" />
+        <orderRef id="0" total="290.00" />
+      </orders>
+    </customer>
+    <customer id="2" name="Kasia">
+      <orderCount>2</orderCount>
+      <totalSpent>420.00</totalSpent>
+      <orders>
+        <orderRef id="0" total="120.00" />
+        <orderRef id="0" total="300.00" />
+      </orders>
+    </customer>
+    <customer id="3" name="Tomek">
+      <orderCount>1</orderCount>
+      <totalSpent>680.00</totalSpent>
+      <orders>
+        <orderRef id="0" total="680.00" />
+      </orders>
+    </customer>
+    <customer id="4" name="VIP_Anna">
+      <orderCount>1</orderCount>
+      <totalSpent>3240.00</totalSpent>
+      <orders>
+        <orderRef id="0" total="3240.00" />
+      </orders>
+    </customer>
+  </byCustomer>
+</report>

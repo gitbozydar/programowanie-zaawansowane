@@ -1,9 +1,16 @@
 public class Order
 {
+    public int Id { get; set; }
+
     public Customer Customer { get; set; }
+    public int CustomerId { get; set; }
+
     public OrderStatus Status { get; set; }
+
     public List<OrderItem> Items { get; private set; } = new List<OrderItem>();
+
     public double TotalPrice => Items.Sum(item => item.TotalPrice);
+
     public Order(Customer customer, OrderStatus status = OrderStatus.New)
     {
         Customer = customer;
@@ -13,10 +20,8 @@ public class Order
     public void AddItem(Product product, int quantity)
     {
         Items.Add(new OrderItem(product, quantity));
-
     }
-    public Order()
-    {
+    public Order(){
+        
     }
-
 }

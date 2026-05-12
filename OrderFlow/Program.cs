@@ -141,8 +141,16 @@
         Console.WriteLine("\n=== MULTIPLE ORDERS ===");
         await simulator.ProcessMultipleOrdersAsync(allOrders);
 
+          Directory.SetCurrentDirectory(
+        Path.GetFullPath(
+            Path.Combine(AppContext.BaseDirectory, @"..\..\..")
+        )
+    );
+
         var repo = new OrderRepository();
         var testOrders = SampleData.Orders;
+
+        
 
         await repo.SaveToJsonAsync(testOrders, "Data/orders.json");
         await repo.SaveToXmlAsync(testOrders, "Data/orders.xml");
@@ -154,5 +162,48 @@
         Console.WriteLine(xml.Count);
         Console.WriteLine(json.Sum(o => o.TotalPrice));
         Console.WriteLine(xml.Sum(o => o.TotalPrice));
+
+        var builder = new XmlReportBuilder();
+
+        var report = builder.BuildReport(SampleData.Orders);
+
+        await builder.SaveReportAsync(report, "Data/report.xml");
+
+        Console.WriteLine("Raport zapisany do Data/report.xml");
+
+        var highValueIds =
+            await builder.FindHighValueOrderIdsAsync(
+                "Data/report.xml",
+                1000m
+            );
+
+        Console.WriteLine("Orders > 1000:");
+        foreach (var id in highValueIds)
+        {
+            Console.WriteLine(id);
+        }
+
+                var inboxPath = Path.Combine(
+            AppContext.BaseDirectory,
+            @"..\..\..\..\inbox"
+        );
+
+        inboxPath = Path.GetFullPath(inboxPath);
+
+        Directory.CreateDirectory(inboxPath);
+        Directory.CreateDirectory(Path.Combine(inboxPath, "processed"));
+        Directory.CreateDirectory(Path.Combine(inboxPath, "failed"));
+
+
+        pipeline.StatusChanged += (sender, e) =>
+        {
+            Console.WriteLine($"[STATUS] {e.OldStatus} -> {e.NewStatus}");
+        };
+
+        using var watcher = new InboxWatcher(inboxPath, pipeline);
+
+        Console.WriteLine("InboxWatcher działa... wrzuć plik JSON do inbox/");
+        Console.ReadLine();
     }
+    
 }
